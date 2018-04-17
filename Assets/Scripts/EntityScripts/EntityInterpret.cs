@@ -19,11 +19,11 @@ public class EntityInterpret : PhysicsObject {
     // Use this for initialization
     void Awake()
     {
-        stats = GetComponent<CharacterStats>();
-        spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
+        //stats = GetComponent<CharacterStats>();
+        //spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
 
-        stats.InitStats();
+        //stats.InitStats();
         //To have it facing right * * *
         SetFacing(1);
     }
@@ -84,10 +84,10 @@ public class EntityInterpret : PhysicsObject {
         {
             if (!GameManagerScript.Instance.PauseActions)
             {
-                if (!isBusy)
+                if (!isBusy || isBusy)
                 {
                     pc.GetInput();
-                    if (pc.GetButton(1)) //Attack button
+                    if (pc.GetButton(1) && !isBusy) //Attack button
                     {
                         Attack();
                     }
@@ -133,7 +133,7 @@ public class EntityInterpret : PhysicsObject {
 
     IEnumerator AttackEventExecution(int direction)
     {
-        unphysics = true;
+        //unphysics = true;
         int currentSubtract = 0;
         while (inAttackAnim)
         {
@@ -141,7 +141,7 @@ public class EntityInterpret : PhysicsObject {
             currentSubtract++;
             yield return null;
         }
-        unphysics = false;
+        //unphysics = false;
     }
 
     public IEnumerator Special(float cooldown)
