@@ -33,11 +33,19 @@ public class EntityInterpret : PhysicsObject {
         StartCoroutine(InterpretInput());
     }
 
+    Vector2 previousMove;
     protected override void ComputeVelocity()
     {
         Vector2 move = Vector2.zero;
+        if(!grounded){
+            move.x = previousMove.x;
+        }
+        else{
+            if(!isBusy){
+                move.x = pc.DirectionInput.x;
+            }
+        }
 
-        move.x = pc.DirectionInput.x;
 
         if (pc.GetButton(0) && grounded && jumpAgain)
         {
@@ -65,7 +73,7 @@ public class EntityInterpret : PhysicsObject {
         {
             animator.SetFloat("Input_X", pc.DirectionInput.x);
         }
-
+        previousMove = move;
         targetVelocity = move * maxSpeed;        
     }
 
@@ -84,6 +92,33 @@ public class EntityInterpret : PhysicsObject {
         {
             if (!GameManagerScript.Instance.PauseActions)
             {
+                //if (!isBusy)
+                //{
+                    pc.GetInput();
+                if (pc.GetButton(1) && !isBusy) //Attack button
+                    {
+                        Attack();
+                    }
+                    else if(pc.GetButton(2)){ //Special button
+                        StartCoroutine(Special(1));
+                    }
+                //}
+                //else
+                //{
+                //    pc.ResetInput();
+                //}
+            }
+            
+            yield return null;
+        }
+    }
+
+    public IEnumerator InterpretInput2()
+    {
+        while (pc)
+        {
+            if (!GameManagerScript.Instance.PauseActions)
+            {
                 if (!isBusy || isBusy)
                 {
                     pc.GetInput();
@@ -91,7 +126,8 @@ public class EntityInterpret : PhysicsObject {
                     {
                         Attack();
                     }
-                    else if(pc.GetButton(2)){ //Special button
+                    else if (pc.GetButton(2))
+                    { //Special button
                         StartCoroutine(Special(1));
                     }
                 }
@@ -100,7 +136,7 @@ public class EntityInterpret : PhysicsObject {
                     pc.ResetInput();
                 }
             }
-            
+
             yield return null;
         }
     }
