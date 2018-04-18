@@ -296,8 +296,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   minGroundNormalY: 0.65
   gravityModifier: 1
-  maxSpeed: 7
-  jumpTakeOffSpeed: 8
+  maxSpeed: 4
+  jumpTakeOffSpeed: 5
   tackleSpeed: 14
   attackUtil: {fileID: 0}
   pc: {fileID: 468601587}

@@ -40,6 +40,9 @@ TextureImporter:
     21300066: SettRaAnims_33
     21300068: SettRaAnims_34
     21300070: SettRaAnims_35
+    21300072: SettRaAnims_36
+    21300074: SettRaAnims_37
+    21300076: SettRaAnims_38
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -651,6 +654,48 @@ TextureImporter:
         serializedVersion: 2
         x: 320
         y: 400
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: SettRaAnims_36
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 320
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: SettRaAnims_37
+      rect:
+        serializedVersion: 2
+        x: 80
+        y: 320
+        width: 80
+        height: 80
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: SettRaAnims_38
+      rect:
+        serializedVersion: 2
+        x: 160
+        y: 320
         width: 80
         height: 80
       alignment: 0
