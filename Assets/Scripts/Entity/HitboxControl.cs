@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class HitboxControl : MonoBehaviour
 {
@@ -8,8 +9,14 @@ public class HitboxControl : MonoBehaviour
         Hitbox, Hurtbox, Guardbox
     }
 
+    public List<Collider2D> ignoreList;
+
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
+        Debug.Log(collision);
+        if(ignoreList.Contains(collision.GetComponent<Collider2D>()) || !collision.GetComponent<HitboxControl>()){
+            return;
+        }
         HitboxControl colBox = collision.GetComponent<HitboxControl>();
         if(colBox != null){
             if(colBox.boxType == BoxType.Hurtbox){
@@ -24,7 +31,28 @@ public class HitboxControl : MonoBehaviour
         }
 	}
 
-    void DealWithCollidedHurtBox(HitboxControl box){
+	private void OnCollisionEnter2D(Collision2D collision)
+	{
+        Debug.Log(collision);
+        HitboxControl colBox = collision.gameObject.GetComponent<HitboxControl>();
+        if (colBox != null)
+        {
+            if (colBox.boxType == BoxType.Hurtbox)
+            {
+                DealWithCollidedHurtBox(colBox);
+            }
+            else if (colBox.boxType == BoxType.Hitbox)
+            {
+                DealWithCollidedHitBox(colBox);
+            }
+            else if (colBox.boxType == BoxType.Guardbox)
+            {
+                DealWithCollidedGuardBox(colBox);
+            }
+        }
+	}
+
+	void DealWithCollidedHurtBox(HitboxControl box){
         if(boxType == BoxType.Hurtbox){
             Debug.Log("Weapon Clash!");
             //Possible clashing of weapons or some attack on attack action
