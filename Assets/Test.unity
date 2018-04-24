@@ -153,6 +153,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+<<<<<<< HEAD
 --- !u!1 &16355037
 GameObject:
   m_ObjectHideFlags: 0
@@ -383,6 +384,7 @@ Transform:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
+<<<<<<< HEAD
   m_GameObject: {fileID: 468601580}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
@@ -438,6 +440,7 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
+<<<<<<< HEAD
   m_Sprite: {fileID: 21300000, guid: 9149ba6082b508b4f932bfac37b4e7eb, type: 3}
 =======
   m_Sprite: {fileID: 21300086, guid: 755330c4d6707469ea979fea73a98e75, type: 3}
@@ -450,6 +453,7 @@ SpriteRenderer:
   m_SpriteTileMode: 0
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
+<<<<<<< HEAD
 --- !u!4 &468601583
 Transform:
   m_ObjectHideFlags: 0
