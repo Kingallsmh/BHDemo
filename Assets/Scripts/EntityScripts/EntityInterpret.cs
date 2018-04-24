@@ -7,13 +7,13 @@ public class EntityInterpret : PhysicsObject {
 	public float maxSpeed = 7;
     public float jumpTakeOffSpeed = 10;
     public float tackleSpeed = 10;
-    public AttackUtils attackUtil;
+    public GameObject attackUtil;
     bool jumpAgain = true;
     bool isBusy = false;
 
     public BaseController pc;
     private CharacterStats stats;
-    private SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer;
     private Animator animator;
 
     // Use this for initialization
@@ -61,18 +61,29 @@ public class EntityInterpret : PhysicsObject {
             }
         }
 
-        //bool flipSprite = (spriteRenderer.flipX ? (move.x > 0.01f) : (move.x < -0.01f));
+        if(move.x > 0)
+        {
+            transform.localScale = new Vector3(-1, 1);
+        }
+        else if(move.x < 0)
+        {
+            transform.localScale = new Vector3(1, 1);
+        }
+        //bool flipSprite = (spriteRenderer.flipX ? (pc.DirectionInput.x < -0.01f) : (pc.DirectionInput.x > 0.01f));
         //if (flipSprite)
         //{
-        //    spriteRenderer.flipX = !spriteRenderer.flipX;
+        //    transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y);
+        //    //spriteRenderer.flipX = !spriteRenderer.flipX;
+        //    //attackUtil.transform.localPosition = new Vector3(-attackUtil.transform.localPosition.x, attackUtil.transform.localPosition.y);
+        //    //attackUtil.GetComponent<SpriteRenderer>().flipX = !attackUtil.GetComponent<SpriteRenderer>().flipX;
         //}
-        
+        animator.SetFloat("Movement_Y", velocity.y);
         animator.SetBool("InAir", !this.grounded);
         animator.SetBool("Moving", Mathf.Abs(velocity.x) > 0);
-        if(pc.DirectionInput.x != 0)
-        {
-            animator.SetFloat("Input_X", pc.DirectionInput.x);
-        }
+        //if(pc.DirectionInput.x != 0)
+        //{
+        //    animator.SetFloat("Input_X", pc.DirectionInput.x);
+        //}
         previousMove = move;
         targetVelocity = move * maxSpeed;        
     }
@@ -92,23 +103,19 @@ public class EntityInterpret : PhysicsObject {
         {
             if (!GameManagerScript.Instance.PauseActions)
             {
-                //if (!isBusy)
-                //{
-                    pc.GetInput();
+                pc.GetInput();
                 if (pc.GetButton(1) && !isBusy) //Attack button
+                {
+                    if (grounded)
                     {
                         Attack();
                     }
-                    else if(pc.GetButton(2)){ //Special button
-                        StartCoroutine(Special(1));
-                    }
-                //}
-                //else
-                //{
-                //    pc.ResetInput();
-                //}
-            }
-            
+                        
+                }
+                else if(pc.GetButton(2)){ //Special button
+                    StartCoroutine(Special(1));
+                }
+            }            
             yield return null;
         }
     }
@@ -188,17 +195,17 @@ public class EntityInterpret : PhysicsObject {
         isBusy = false;
     }
 
-    public void LaunchProjectile()
-    {
-        if(animator.GetFloat("Input_X") > 0)
-        {
-            attackUtil.FireAmmo(1, 0);
-        }
-        else
-        {
-            attackUtil.FireAmmo(-1, 0);
-        }
-    }
+    //public void LaunchProjectile()
+    //{
+    //    if(animator.GetFloat("Input_X") > 0)
+    //    {
+    //        attackUtil.FireAmmo(1, 0);
+    //    }
+    //    else
+    //    {
+    //        attackUtil.FireAmmo(-1, 0);
+    //    }
+    //}
 
     public void SetToNotBusy(float delay)
     {
