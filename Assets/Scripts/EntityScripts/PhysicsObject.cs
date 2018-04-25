@@ -11,6 +11,7 @@ public class PhysicsObject : MonoBehaviour
     protected Vector2 targetVelocity;
     protected bool grounded;
     protected bool unphysics;
+    protected bool isBusy = false;
     protected Vector2 groundNormal;
     protected Rigidbody2D rb2d;
     protected Vector2 velocity;

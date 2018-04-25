@@ -6,10 +6,11 @@ public class EntityInterpret : PhysicsObject {
 
 	public float maxSpeed = 7;
     public float jumpTakeOffSpeed = 10;
+    public float dodgeSpeed = 2;
     public float tackleSpeed = 10;
     public AttackUtils attackUtil;
     bool jumpAgain = true;
-    bool isBusy = false;
+    bool dodging = false;
 
     public BaseController pc;
     private CharacterStats stats;
@@ -33,10 +34,12 @@ public class EntityInterpret : PhysicsObject {
         StartCoroutine(InterpretInput());
     }
 
+    //For controlling movement of the entity
     Vector2 previousMove;
     protected override void ComputeVelocity()
     {
         Vector2 move = Vector2.zero;
+
         if(!grounded){
             move.x = previousMove.x;
         }
@@ -45,7 +48,6 @@ public class EntityInterpret : PhysicsObject {
                 move.x = pc.DirectionInput.x;
             }
         }
-
 
         if (pc.GetButton(0) && grounded && jumpAgain)
         {
@@ -80,7 +82,7 @@ public class EntityInterpret : PhysicsObject {
     public IEnumerator WatchForJumpRelease()
     {
         while (pc.GetButton(0) || !grounded)
-        {
+        { 
             yield return null;
         }
         jumpAgain = true;
@@ -186,6 +188,10 @@ public class EntityInterpret : PhysicsObject {
         animator.SetTrigger("Special");
         yield return new WaitForSeconds(cooldown);
         isBusy = false;
+    }
+
+    public float Dodge(){
+        return dodgeSpeed;
     }
 
     public void LaunchProjectile()
