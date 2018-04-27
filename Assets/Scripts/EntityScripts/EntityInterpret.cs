@@ -2,19 +2,22 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityInterpret : PhysicsObject {
+public class EntityInterpret : PhysicsObject, Damagable {
 
 	public float maxSpeed = 7;
+    public float speed = 7;
     public float jumpTakeOffSpeed = 10;
     public float dodgeSpeed = 2;
-    public float tackleSpeed = 10;
-    public AttackUtils attackUtil;
+    public bool isDodging = false;
+    public float totalDodgeTime = 2;
+    float dodgeTimer = 0;
+    public GameObject attackUtil;
     bool jumpAgain = true;
     bool dodging = false;
 
     public BaseController pc;
     private CharacterStats stats;
-    private SpriteRenderer spriteRenderer;
+    public SpriteRenderer spriteRenderer;
     private Animator animator;
 
     // Use this for initialization
@@ -40,13 +43,26 @@ public class EntityInterpret : PhysicsObject {
     {
         Vector2 move = Vector2.zero;
 
-        if(!grounded){
-            move.x = previousMove.x;
+        //if(!grounded){
+        //    move.x = previousMove.x;
+        //}
+        //else{
+        //    if(!isBusy){
+        //        move.x = pc.DirectionInput.x;
+        //    }
+        //}
+        if(!isBusy){
+            move.x = pc.DirectionInput.x;
         }
         else{
-            if(!isBusy){
-                move.x = pc.DirectionInput.x;
-            }
+            if(isDodging)
+                move.x = Dodge(totalDodgeTime);
+        }
+
+        if(pc.GetButton(2) && grounded && !isBusy){
+            isDodging = true;
+            isBusy = true;
+            animator.SetBool("Dash", true);
         }
 
         if (pc.GetButton(0) && grounded && jumpAgain)
@@ -63,20 +79,31 @@ public class EntityInterpret : PhysicsObject {
             }
         }
 
-        //bool flipSprite = (spriteRenderer.flipX ? (move.x > 0.01f) : (move.x < -0.01f));
+        if(move.x > 0)
+        {
+            transform.localScale = new Vector3(-1, 1);
+        }
+        else if(move.x < 0)
+        {
+            transform.localScale = new Vector3(1, 1);
+        }
+        //bool flipSprite = (spriteRenderer.flipX ? (pc.DirectionInput.x < -0.01f) : (pc.DirectionInput.x > 0.01f));
         //if (flipSprite)
         //{
-        //    spriteRenderer.flipX = !spriteRenderer.flipX;
+        //    transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y);
+        //    //spriteRenderer.flipX = !spriteRenderer.flipX;
+        //    //attackUtil.transform.localPosition = new Vector3(-attackUtil.transform.localPosition.x, attackUtil.transform.localPosition.y);
+        //    //attackUtil.GetComponent<SpriteRenderer>().flipX = !attackUtil.GetComponent<SpriteRenderer>().flipX;
         //}
-        
+        animator.SetFloat("Movement_Y", velocity.y);
         animator.SetBool("InAir", !this.grounded);
         animator.SetBool("Moving", Mathf.Abs(velocity.x) > 0);
-        if(pc.DirectionInput.x != 0)
-        {
-            animator.SetFloat("Input_X", pc.DirectionInput.x);
-        }
+        //if(pc.DirectionInput.x != 0)
+        //{
+        //    animator.SetFloat("Input_X", pc.DirectionInput.x);
+        //}
         previousMove = move;
-        targetVelocity = move * maxSpeed;        
+        targetVelocity = move * maxSpeed;     
     }
 
     public IEnumerator WatchForJumpRelease()
@@ -94,23 +121,19 @@ public class EntityInterpret : PhysicsObject {
         {
             if (!GameManagerScript.Instance.PauseActions)
             {
-                //if (!isBusy)
-                //{
-                    pc.GetInput();
+                pc.GetInput();
                 if (pc.GetButton(1) && !isBusy) //Attack button
+                {
+                    if (grounded)
                     {
                         Attack();
                     }
-                    else if(pc.GetButton(2)){ //Special button
-                        StartCoroutine(Special(1));
-                    }
+                        
+                }
+                //else if(pc.GetButton(2)){ //Special button
+                //    StartCoroutine(Special(1));
                 //}
-                //else
-                //{
-                //    pc.ResetInput();
-                //}
-            }
-            
+            }            
             yield return null;
         }
     }
@@ -161,7 +184,7 @@ public class EntityInterpret : PhysicsObject {
     public void AttackEventStart(int direction)
     {
         inAttackAnim = true;
-        StartCoroutine(AttackEventExecution(direction));
+        //StartCoroutine(AttackEventExecution(direction));
     }
 
     public void AttackEventEnd()
@@ -169,18 +192,18 @@ public class EntityInterpret : PhysicsObject {
         inAttackAnim = false;
     }
 
-    IEnumerator AttackEventExecution(int direction)
-    {
-        //unphysics = true;
-        int currentSubtract = 0;
-        while (inAttackAnim)
-        {
-            Movement(new Vector2(tackleSpeed - currentSubtract, 0) * Time.deltaTime * direction, false);
-            currentSubtract++;
-            yield return null;
-        }
-        //unphysics = false;
-    }
+    //IEnumerator AttackEventExecution(int direction)
+    //{
+    //    //unphysics = true;
+    //    int currentSubtract = 0;
+    //    while (inAttackAnim)
+    //    {
+    //        Movement(new Vector2(tackleSpeed - currentSubtract, 0) * Time.deltaTime * direction, false);
+    //        currentSubtract++;
+    //        yield return null;
+    //    }
+    //    //unphysics = false;
+    //}
 
     public IEnumerator Special(float cooldown)
     {
@@ -190,19 +213,30 @@ public class EntityInterpret : PhysicsObject {
         isBusy = false;
     }
 
-    public float Dodge(){
-        return dodgeSpeed;
-    }
+    //public void LaunchProjectile()
+    //{
+    //    if(animator.GetFloat("Input_X") > 0)
+    //    {
+    //        attackUtil.FireAmmo(1, 0);
+    //    }
+    //    else
+    //    {
+    //        attackUtil.FireAmmo(-1, 0);
+    //    }
+    //}
 
-    public void LaunchProjectile()
-    {
-        if(animator.GetFloat("Input_X") > 0)
-        {
-            attackUtil.FireAmmo(1, 0);
+    float Dodge(float time){
+        if(dodgeTimer > time){
+            isDodging = false;
+            isBusy = false;
+            dodgeTimer = 0;
+            animator.SetBool("Dash", false);
+            StartCoroutine(AllActionCooldown(0.1f));
+            return 0;
         }
-        else
-        {
-            attackUtil.FireAmmo(-1, 0);
+        else{
+            dodgeTimer += Time.deltaTime;
+            return dodgeSpeed * -transform.localScale.x;
         }
     }
 
@@ -221,5 +255,13 @@ public class EntityInterpret : PhysicsObject {
     public void SetFacing(float x)
     {
         animator.SetFloat("Input_X", x);
+    }
+
+    public void TakeDamage(int dmg)
+    {
+    }
+
+    public void TakeDamage(int dmg, Vector2 location)
+    {
     }
 }

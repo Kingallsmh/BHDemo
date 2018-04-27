@@ -1,16 +1,9 @@
 fileFormatVersion: 2
-guid: d6e8dab7a4ec24e5d9f956ca3cb95e79
-timeCreated: 1524228558
-licenseType: Pro
+guid: 9c5538b20563de34a9f01974d6842648
 TextureImporter:
   fileIDToRecycleName:
-    21300000: TopClosed
-    21300002: TopOpen1
-    21300004: TopOpen2
-    21300006: TopOpen3
-    21300008: Center1
-    21300010: Center2
-    21300012: Center3
+    21300000: 19544_0
+    21300002: 19544_1
   externalObjects: {}
   serializedVersion: 4
   mipmaps:
@@ -43,7 +36,7 @@ TextureImporter:
     mipBias: -1
     wrapU: 1
     wrapV: 1
-    wrapW: 1
+    wrapW: -1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
@@ -127,7 +120,7 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: TopClosed
+      name: 19544_0
       rect:
         serializedVersion: 2
         x: 3
@@ -141,82 +134,12 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
     - serializedVersion: 2
-      name: TopOpen1
+      name: 19544_1
       rect:
         serializedVersion: 2
-        x: 102
-        y: 132
-        width: 96
-        height: 37
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: TopOpen2
-      rect:
-        serializedVersion: 2
-        x: 201
-        y: 132
-        width: 96
-        height: 45
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: TopOpen3
-      rect:
-        serializedVersion: 2
-        x: 300
-        y: 132
-        width: 96
-        height: 49
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Center1
-      rect:
-        serializedVersion: 2
-        x: 104
+        x: 105
         y: 23
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Center2
-      rect:
-        serializedVersion: 2
-        x: 139
-        y: 23
-        width: 32
-        height: 48
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-    - serializedVersion: 2
-      name: Center3
-      rect:
-        serializedVersion: 2
-        x: 174
-        y: 23
-        width: 32
+        width: 30
         height: 48
       alignment: 0
       pivot: {x: 0, y: 0}

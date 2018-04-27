@@ -9,11 +9,13 @@ public class HitboxControl : MonoBehaviour
         Hitbox, Hurtbox, Guardbox
     }
 
+    public Damagable damageItem;
+
     public List<Collider2D> ignoreList;
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-        Debug.Log(collision);
+        Debug.Log("Trigger: " + collision);
         if(ignoreList.Contains(collision.GetComponent<Collider2D>()) || !collision.GetComponent<HitboxControl>()){
             return;
         }
@@ -33,7 +35,7 @@ public class HitboxControl : MonoBehaviour
 
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
-        Debug.Log(collision);
+        Debug.Log("Collision: " + collision);
         HitboxControl colBox = collision.gameObject.GetComponent<HitboxControl>();
         if (colBox != null)
         {
@@ -59,6 +61,9 @@ public class HitboxControl : MonoBehaviour
         }
         else if(boxType == BoxType.Hitbox){
             Debug.Log("Damage Recieved...");
+            if(damageItem != null){
+                damageItem.TakeDamage(1, box.GetComponent<Collider2D>().transform.position);
+            }
             //Recieve damage
         }
         else if (boxType == BoxType.Guardbox)
@@ -71,6 +76,7 @@ public class HitboxControl : MonoBehaviour
     void DealWithCollidedHitBox(HitboxControl box){
         if(boxType == BoxType.Hurtbox){
             Debug.Log("Dealt damage!");
+
             //Deal damage to said box/owner
         }
     }

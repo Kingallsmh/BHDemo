@@ -1,7 +1,5 @@
 fileFormatVersion: 2
-guid: 48e0da20907ba466ea48706cf11db995
-timeCreated: 1524228557
-licenseType: Pro
+guid: 20da5c1400a9b8c43a43349115feb354
 TextureImporter:
   fileIDToRecycleName:
     21300000: CompressedSMTileset_0
@@ -1046,7 +1044,7 @@ TextureImporter:
     mipBias: -1
     wrapU: 1
     wrapV: 1
-    wrapW: 1
+    wrapW: -1
   nPOTScale: 0
   lightmap: 0
   compressionQuality: 50
