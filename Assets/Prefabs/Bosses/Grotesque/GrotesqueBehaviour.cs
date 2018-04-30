@@ -20,6 +20,9 @@ public class GrotesqueBehaviour : MonoBehaviour, Damagable {
     public bool isHit = false;
     public GameObject dmgSpot;
 
+    //Testing variables
+    public GameObject target;
+
     public enum BossState{
         Idle = 0, Move = 1, Atk1 = 2, Atk2 = 3
     }
@@ -42,27 +45,34 @@ public class GrotesqueBehaviour : MonoBehaviour, Damagable {
             switch(currentState){
                 case BossState.Idle: yield return StartCoroutine(Idle(0.4f));
                     break;
-                case BossState.Move: yield return StartCoroutine(MoveForward(0.4f));
+                case BossState.Move: FaceInDirection(target.transform.position);
+                    yield return StartCoroutine(MoveForward(0.8f, 2));
                     break;
                 case BossState.Atk1: yield return StartCoroutine(Atk1(atk1Clip));
                     break;
                 case BossState.Atk2: yield return StartCoroutine(Atk2());
                     break;
             }
-            yield return new WaitForSeconds(thoughtTime);
+            yield return StartCoroutine(Idle(thoughtTime));
             DecideNextAction();
         }
     }
 
     void FaceInDirection(Vector2 position){
-        float facing = Mathf.Sign(transform.position.x - position.x);
-        transform.localScale = new Vector3(facing*transform.localScale.x, 2, 1);
+        float facing = Mathf.Sign(position.x - transform.position.x);
+        transform.localScale = new Vector3(facing*1, 1, 1);
     }
 
-    IEnumerator MoveForward(float time){
+    void MoveInFacingDirection(float speedInc){
+        Vector2 move = Vector2.zero;
+        move.x = moveSpeed * transform.localScale.x * Time.deltaTime * 10 * speedInc;
+        rb2d.velocity = move;
+    }
+
+    IEnumerator MoveForward(float time, float speedInc){
         Vector2 move = Vector2.zero;
         anim.SetBool("Moving", true);
-        move.x = moveSpeed * transform.localScale.x * Time.deltaTime * 10;
+        move.x = moveSpeed * transform.localScale.x * Time.deltaTime * 10 * speedInc;
         rb2d.velocity = move;
         yield return new WaitForSeconds(time);
         anim.SetBool("Moving", false);
@@ -81,14 +91,21 @@ public class GrotesqueBehaviour : MonoBehaviour, Damagable {
 
     IEnumerator Atk2()
     {
+        yield return StartCoroutine(GoUnderGround());
+        //Vector3 v3 = new Vector3(-28, -3.5f, 10);
+        //transform.position = v3;
+        for (int i = 0; i < 3; i++){
+            FaceInDirection(target.transform.position);
+            MoveInFacingDirection(4);
+            yield return new WaitForSeconds(atk2Time/3);
+        }
+        anim.SetTrigger("ExitAtk");
+        rb2d.velocity = new Vector3(0, 0, 0);
+    }
+
+    IEnumerator GoUnderGround(){
         anim.SetTrigger("Atk2");
         yield return new WaitForSeconds(anim.GetCurrentAnimatorClipInfo(0).Length - 0.1f);
-        Vector3 v3 = new Vector3(-28, -3.5f, 10);
-        transform.position = v3;
-        rb2d.velocity = new Vector3(100 * Time.deltaTime, 0, 0);
-        yield return new WaitForSeconds(atk2Time);
-        anim.SetTrigger("ExitAtk");
-        transform.position = atk2BeginSpot;
     }
 
     void DecideNextAction(){

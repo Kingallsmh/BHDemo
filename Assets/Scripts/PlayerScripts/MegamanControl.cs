@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class EntityInterpret : PhysicsObject, Damagable {
+public class MegamanControl : PhysicsObject {
 
-	public float maxSpeed = 7;
+    public float maxSpeed = 7;
     public float speed = 7;
     public float jumpTakeOffSpeed = 10;
     public float dodgeSpeed = 2;
@@ -16,18 +16,12 @@ public class EntityInterpret : PhysicsObject, Damagable {
 
     public BaseController pc;
     private CharacterStats stats;
-    public SpriteRenderer spriteRenderer;
     private Animator animator;
 
     // Use this for initialization
     void Awake()
     {
-        //stats = GetComponent<CharacterStats>();
-        //spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-
-        //stats.InitStats();
-        //To have it facing right * * *
         SetFacing(1);
     }
 
@@ -41,24 +35,18 @@ public class EntityInterpret : PhysicsObject, Damagable {
     protected override void ComputeVelocity()
     {
         Vector2 move = Vector2.zero;
-
-        //if(!grounded){
-        //    move.x = previousMove.x;
-        //}
-        //else{
-        //    if(!isBusy){
-        //        move.x = pc.DirectionInput.x;
-        //    }
-        //}
-        if(!isBusy){
+        if (!isBusy)
+        {
             move.x = pc.DirectionInput.x;
         }
-        else{
-            if(isDodging)
+        else
+        {
+            if (isDodging)
                 move.x = Dodge(totalDodgeTime);
         }
 
-        if(pc.GetButton(2) && grounded && !isBusy){
+        if (pc.GetButton(2) && grounded && !isBusy)
+        {
             isDodging = true;
             isBusy = true;
             animator.SetBool("Dash", true);
@@ -78,37 +66,25 @@ public class EntityInterpret : PhysicsObject, Damagable {
             }
         }
 
-        if(move.x > 0)
+        if (move.x > 0)
         {
             transform.localScale = new Vector3(-1, 1);
         }
-        else if(move.x < 0)
+        else if (move.x < 0)
         {
             transform.localScale = new Vector3(1, 1);
         }
-        //bool flipSprite = (spriteRenderer.flipX ? (pc.DirectionInput.x < -0.01f) : (pc.DirectionInput.x > 0.01f));
-        //if (flipSprite)
-        //{
-        //    transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y);
-        //    //spriteRenderer.flipX = !spriteRenderer.flipX;
-        //    //attackUtil.transform.localPosition = new Vector3(-attackUtil.transform.localPosition.x, attackUtil.transform.localPosition.y);
-        //    //attackUtil.GetComponent<SpriteRenderer>().flipX = !attackUtil.GetComponent<SpriteRenderer>().flipX;
-        //}
         animator.SetFloat("Movement_Y", velocity.y);
         animator.SetBool("InAir", !this.grounded);
         animator.SetBool("Moving", Mathf.Abs(velocity.x) > 0);
-        //if(pc.DirectionInput.x != 0)
-        //{
-        //    animator.SetFloat("Input_X", pc.DirectionInput.x);
-        //}
         previousMove = move;
-        targetVelocity = move * maxSpeed;     
+        targetVelocity = move * maxSpeed;
     }
 
     public IEnumerator WatchForJumpRelease()
     {
         while (pc.GetButton(0) || !grounded)
-        { 
+        {
             yield return null;
         }
         jumpAgain = true;
@@ -127,12 +103,8 @@ public class EntityInterpret : PhysicsObject, Damagable {
                     {
                         Attack();
                     }
-                        
                 }
-                //else if(pc.GetButton(2)){ //Special button
-                //    StartCoroutine(Special(1));
-                //}
-            }            
+            }
             yield return null;
         }
     }
@@ -151,7 +123,7 @@ public class EntityInterpret : PhysicsObject, Damagable {
                         Attack();
                     }
                     else if (pc.GetButton(2))
-                    { //Special button
+                    {
                         StartCoroutine(Special(1));
                     }
                 }
@@ -224,8 +196,10 @@ public class EntityInterpret : PhysicsObject, Damagable {
     //    }
     //}
 
-    float Dodge(float time){
-        if(dodgeTimer > time){
+    float Dodge(float time)
+    {
+        if (dodgeTimer > time)
+        {
             isDodging = false;
             isBusy = false;
             dodgeTimer = 0;
@@ -233,7 +207,8 @@ public class EntityInterpret : PhysicsObject, Damagable {
             StartCoroutine(AllActionCooldown(0.1f));
             return 0;
         }
-        else{
+        else
+        {
             dodgeTimer += Time.deltaTime;
             return dodgeSpeed * -transform.localScale.x;
         }
