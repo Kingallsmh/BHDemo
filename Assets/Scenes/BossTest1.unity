@@ -258,7 +258,42 @@ Prefab:
       propertyPath: m_SurfaceArc
       value: 100
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 61081800442463926, guid: b420a89ab583b472ebd78f5c104d7d5e,
+        type: 2}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 61543822688988922, guid: b420a89ab583b472ebd78f5c104d7d5e,
+        type: 2}
+      propertyPath: m_UsedByComposite
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 61869898062431636, guid: b420a89ab583b472ebd78f5c104d7d5e,
+        type: 2}
+      propertyPath: m_UsedByComposite
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 61473132012059474, guid: b420a89ab583b472ebd78f5c104d7d5e,
+        type: 2}
+      propertyPath: m_UsedByComposite
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 61670179435334996, guid: b420a89ab583b472ebd78f5c104d7d5e,
+        type: 2}
+      propertyPath: m_UsedByComposite
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 61415637503167036, guid: b420a89ab583b472ebd78f5c104d7d5e,
+        type: 2}
+      propertyPath: m_UsedByComposite
+      value: 1
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 251081044539073780, guid: b420a89ab583b472ebd78f5c104d7d5e, type: 2}
+    - {fileID: 251719567648977012, guid: b420a89ab583b472ebd78f5c104d7d5e, type: 2}
+    - {fileID: 251198269572912912, guid: b420a89ab583b472ebd78f5c104d7d5e, type: 2}
+    - {fileID: 251720890171000106, guid: b420a89ab583b472ebd78f5c104d7d5e, type: 2}
+    - {fileID: 251424636212383028, guid: b420a89ab583b472ebd78f5c104d7d5e, type: 2}
   m_SourcePrefab: {fileID: 100100000, guid: b420a89ab583b472ebd78f5c104d7d5e, type: 2}
   m_IsPrefabAsset: 0
 --- !u!1001 &578278664
@@ -1440,11 +1475,143 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!61 &1366679312 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 61415637503167036, guid: b420a89ab583b472ebd78f5c104d7d5e,
+    type: 2}
+  m_PrefabInternal: {fileID: 499622822}
+--- !u!1 &1433619066 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1507288221746232, guid: b420a89ab583b472ebd78f5c104d7d5e,
+    type: 2}
+  m_PrefabInternal: {fileID: 499622822}
+--- !u!251 &1433619069
+PlatformEffector2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1433619066}
+  m_Enabled: 1
+  m_UseColliderMask: 1
+  m_ColliderMask:
+    serializedVersion: 2
+    m_Bits: 4294967295
+  m_RotationalOffset: 0
+  m_UseOneWay: 1
+  m_UseOneWayGrouping: 0
+  m_SurfaceArc: 100
+  m_UseSideFriction: 0
+  m_UseSideBounce: 0
+  m_SideArc: 1
+--- !u!66 &1433619070
+CompositeCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1433619066}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 1
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_GeometryType: 0
+  m_GenerationType: 0
+  m_EdgeRadius: 0
+  m_ColliderPaths:
+  - m_Collider: {fileID: 1518806172}
+    m_ColliderPaths:
+    - - X: 25000000
+        Y: 15000000
+      - X: 5000000
+        Y: 15000000
+      - X: 5000000
+        Y: -5000000
+      - X: 25000000
+        Y: -5000000
+  - m_Collider: {fileID: 1435008817}
+    m_ColliderPaths:
+    - - X: 45000000
+        Y: 15000000
+      - X: 25000000
+        Y: 15000000
+      - X: 25000000
+        Y: -5000000
+      - X: 45000000
+        Y: -5000000
+  - m_Collider: {fileID: 1953564737}
+    m_ColliderPaths:
+    - - X: 65000000
+        Y: 15000000
+      - X: 45000000
+        Y: 15000000
+      - X: 45000000
+        Y: -5000000
+      - X: 65000000
+        Y: -5000000
+  - m_Collider: {fileID: 2104588852}
+    m_ColliderPaths:
+    - - X: 85000000
+        Y: 15000000
+      - X: 65000000
+        Y: 15000000
+      - X: 65000000
+        Y: -5000000
+      - X: 85000000
+        Y: -5000000
+  - m_Collider: {fileID: 1366679312}
+    m_ColliderPaths:
+    - - X: 105000000
+        Y: 15000000
+      - X: 85000000
+        Y: 15000000
+      - X: 85000000
+        Y: -5000000
+      - X: 105000000
+        Y: -5000000
+  m_CompositePaths:
+    m_Paths:
+    - - {x: 0.5, y: -0.5}
+      - {x: 10.5, y: -0.5}
+      - {x: 10.5, y: 1.5}
+      - {x: 0.5, y: 1.5}
+  m_VertexDistance: 0.0005
+--- !u!50 &1433619071
+Rigidbody2D:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 1433619066}
+  m_BodyType: 1
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDrag: 0
+  m_AngularDrag: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
+--- !u!61 &1435008817 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 61869898062431636, guid: b420a89ab583b472ebd78f5c104d7d5e,
+    type: 2}
+  m_PrefabInternal: {fileID: 499622822}
 --- !u!1 &1438679748 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1855301766293804, guid: efe8331bdde0443ed9c8c1c6be332d7b,
     type: 2}
   m_PrefabInternal: {fileID: 1760666525}
+--- !u!61 &1518806172 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 61543822688988922, guid: b420a89ab583b472ebd78f5c104d7d5e,
+    type: 2}
+  m_PrefabInternal: {fileID: 499622822}
 --- !u!1 &1538462507 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 1973728257229476, guid: eba40f875e73741b680d7f0bb74a5fc2,
@@ -1768,3 +1935,13 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!61 &1953564737 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 61473132012059474, guid: b420a89ab583b472ebd78f5c104d7d5e,
+    type: 2}
+  m_PrefabInternal: {fileID: 499622822}
+--- !u!61 &2104588852 stripped
+BoxCollider2D:
+  m_CorrespondingSourceObject: {fileID: 61670179435334996, guid: b420a89ab583b472ebd78f5c104d7d5e,
+    type: 2}
+  m_PrefabInternal: {fileID: 499622822}

@@ -108,8 +108,6 @@ public class GrotesqueBehaviour : MonoBehaviour, Damagable {
     IEnumerator Atk2()
     {
         yield return StartCoroutine(GoUnderGround());
-        //Vector3 v3 = new Vector3(-28, -3.5f, 10);
-        //transform.position = v3;
         for (int i = 0; i < 3; i++){
             FaceInDirection(target.transform.position);
             MoveInFacingDirection(4);

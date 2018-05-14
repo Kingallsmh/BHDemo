@@ -9,6 +9,7 @@ public class EntityInterpret : PhysicsObject, Damagable {
     public float incrementMove = 1;
     public float decreaseMove = 1;
     public float jumpTakeOffSpeed = 10;
+	public float lateJumpTime = 0.2f;
     public float dodgeSpeed = 2;
     public bool isDodging = false;
     public float totalDodgeTime = 2;
@@ -39,6 +40,7 @@ public class EntityInterpret : PhysicsObject, Damagable {
 
     //Variable used to record previous input and input velocity
     Vector2 previousMove;
+	bool previousGroundedState;
     protected override void ComputeVelocity()
     {
         Vector2 move = previousMove;
@@ -77,10 +79,11 @@ public class EntityInterpret : PhysicsObject, Damagable {
         //Handling Jumping and air control
         if (pc.GetButton(0) && grounded && jumpAgain && !isBusy)
         {
-            velocity.y = jumpTakeOffSpeed;
-            jumpAgain = false;
-			ResetGroundNormal();
-            StartCoroutine(WatchForJumpRelease());
+			Jump();
+        }
+		else if (previousGroundedState == true && grounded == false)
+        {
+			StartCoroutine(LateJumpWatch(lateJumpTime));
         }
         else if (!pc.GetButton(0)) //Can add "&& !isBusy" to continue upwards motion or go change if receiving input or not
         {
@@ -89,6 +92,7 @@ public class EntityInterpret : PhysicsObject, Damagable {
                 velocity.y = velocity.y * 0.5f;
             }
         }
+
 
         //Change the characters facing direction
         if(move.x > 0)
@@ -109,17 +113,38 @@ public class EntityInterpret : PhysicsObject, Damagable {
         animator.SetFloat("Movement_Y", velocity.y);
         animator.SetBool("InAir", !this.grounded);
         animator.SetBool("Moving", Mathf.Abs(velocity.x) > 0);
-        //if(pc.DirectionInput.x != 0)
-        //{
-        //    animator.SetFloat("Input_X", pc.DirectionInput.x);
-        //}
+		//if(pc.DirectionInput.x != 0)
+		//{
+		//    animator.SetFloat("Input_X", pc.DirectionInput.x);
+		//}
 
+		previousGroundedState = grounded;
         previousMove = move;
         //If there is push back, add to move variable
         move += pushVelocity;
         PushBack();
-        targetVelocity = move * speed;     
+        targetVelocity = move * speed;
     }
+
+	public void Jump(){
+		velocity.y = jumpTakeOffSpeed;
+        jumpAgain = false;
+        ResetGroundNormal();
+        StartCoroutine(WatchForJumpRelease());
+		grounded = false;
+	}
+
+	public IEnumerator LateJumpWatch(float time){
+		float passedTime = 0;
+		while(passedTime < time && !grounded){
+			if(pc.GetButton(0) && !isBusy){
+				Jump();
+				break;
+			}
+			passedTime += Time.deltaTime;
+			yield return null;
+		}
+	}
 
     public IEnumerator WatchForJumpRelease()
     {

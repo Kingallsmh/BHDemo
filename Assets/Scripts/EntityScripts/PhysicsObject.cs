@@ -68,7 +68,7 @@ public class PhysicsObject : MonoBehaviour
 
         Vector2 move = moveAlongGround * deltaPosition.x;
         
-		Debug.Log("Current normal: " + groundNormal);
+		//Debug.Log("Current normal: " + groundNormal);
 
         Movement(move, false);
 
@@ -102,7 +102,7 @@ public class PhysicsObject : MonoBehaviour
                 { //hitBuffer[i].normal == Vector2.up && 
                     if (hitBuffer[i].normal.y > 0)
                     {
-                        Debug.Log(hitBuffer[i].normal);
+                        //Debug.Log(hitBuffer[i].normal);
                         if (rb2d.IsTouching(hitBuffer[i].collider))
                         {
                             hitBufferList.Add(hitBuffer[i]);
@@ -111,7 +111,7 @@ public class PhysicsObject : MonoBehaviour
                 }
                 if(platformAddition){
                     if(platformAddition.MoveWithPlatform){
-                        Debug.Log("Platform Move: " + platformAddition.rb2d.velocity);
+                        //Debug.Log("Platform Move: " + platformAddition.rb2d.velocity);
                         rb2d.velocity += hitBuffer[i].collider.GetComponent<PlatformAddition>().rb2d.velocity;
                     }
                 }
