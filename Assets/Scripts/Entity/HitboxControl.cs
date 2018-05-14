@@ -9,13 +9,15 @@ public class HitboxControl : MonoBehaviour
         Hitbox, Hurtbox, Guardbox
     }
 
+    public Vector2 pushStrength = Vector2.zero;
+
     public Damagable damageItem;
 
     public List<Collider2D> ignoreList;
 
 	private void OnTriggerEnter2D(Collider2D collision)
 	{
-        Debug.Log("Trigger: " + collision);
+        //Debug.Log("Trigger: " + collision);
         if(ignoreList.Contains(collision.GetComponent<Collider2D>()) || !collision.GetComponent<HitboxControl>()){
             return;
         }
@@ -35,7 +37,7 @@ public class HitboxControl : MonoBehaviour
 
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
-        Debug.Log("Collision: " + collision);
+        //Debug.Log("Collision: " + collision);
         HitboxControl colBox = collision.gameObject.GetComponent<HitboxControl>();
         if (colBox != null)
         {
@@ -56,26 +58,29 @@ public class HitboxControl : MonoBehaviour
 
 	void DealWithCollidedHurtBox(HitboxControl box){
         if(boxType == BoxType.Hurtbox){
-            Debug.Log("Weapon Clash!");
+            //Debug.Log("Weapon Clash!");
             //Possible clashing of weapons or some attack on attack action
         }
         else if(boxType == BoxType.Hitbox){
-            Debug.Log("Damage Recieved...");
+            //Debug.Log("Damage Recieved...");
             if(damageItem != null){
                 damageItem.TakeDamage(1, box.GetComponent<Collider2D>().transform.position);
+                float x = box.transform.position.x - transform.position.x;
+                Debug.Log(x);
+                damageItem.PushBack(new Vector2(Mathf.Sign(x) * -box.pushStrength.x, box.pushStrength.y));
             }
             //Recieve damage
         }
         else if (boxType == BoxType.Guardbox)
         {
-            Debug.Log("Guarded Damage Recieved...");
+            //Debug.Log("Guarded Damage Recieved...");
             //Recieve damage
         }
     }
 
     void DealWithCollidedHitBox(HitboxControl box){
         if(boxType == BoxType.Hurtbox){
-            Debug.Log("Dealt damage!");
+            //Debug.Log("Dealt damage!");
 
             //Deal damage to said box/owner
         }
@@ -83,7 +88,7 @@ public class HitboxControl : MonoBehaviour
 
     void DealWithCollidedGuardBox(HitboxControl box){
         if(boxType == BoxType.Hurtbox){
-            Debug.Log("Dealt reduced damage!");
+            //Debug.Log("Dealt reduced damage!");
             //Deal less damage due to guarding or hard part
         }
     }

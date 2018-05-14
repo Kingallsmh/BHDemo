@@ -9,7 +9,6 @@ public class AIController : BaseController
     private void Start()
     {
         interpret = GetComponent<EntityInterpret>();
-        interpret.SetFacing(-1);
     }
 
     public override void GetInput()

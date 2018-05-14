@@ -15,12 +15,14 @@ public class GrotesqueBehaviour : MonoBehaviour, Damagable {
     Vector3 atk2BeginSpot = new Vector3(-11, -3.5f, 10);
     public float atk2Time = 3;
     public List<HitboxControl> boxList;
+    List<WeightedDecision> decisionWeights;
 
     public BossState currentState = BossState.Idle;
     public bool isHit = false;
     public GameObject dmgSpot;
 
     //Testing variables
+    public bool DecideForSelf = true;
     public GameObject target;
 
     public enum BossState{
@@ -30,6 +32,7 @@ public class GrotesqueBehaviour : MonoBehaviour, Damagable {
 	// Use this for initialization
 	void Start () {
         StartHitbox();
+        CreateDecisionWeights();
         rb2d = GetComponent<Rigidbody2D>();
         StartCoroutine(GrotesqueLoop());
 	}
@@ -40,6 +43,16 @@ public class GrotesqueBehaviour : MonoBehaviour, Damagable {
         }
     }
 
+    void CreateDecisionWeights(){
+        if(decisionWeights == null){
+            decisionWeights = new List<WeightedDecision>();
+        }
+        decisionWeights.Add(new WeightedDecision(0, 15));
+        decisionWeights.Add(new WeightedDecision(1, 25));
+        decisionWeights.Add(new WeightedDecision(2, 20));
+        decisionWeights.Add(new WeightedDecision(4, 5));
+    }
+
     IEnumerator GrotesqueLoop(){
         while(true){
             switch(currentState){
@@ -48,13 +61,16 @@ public class GrotesqueBehaviour : MonoBehaviour, Damagable {
                 case BossState.Move: FaceInDirection(target.transform.position);
                     yield return StartCoroutine(MoveForward(0.8f, 2));
                     break;
-                case BossState.Atk1: yield return StartCoroutine(Atk1(atk1Clip));
+                case BossState.Atk1: FaceInDirection(target.transform.position);
+                    yield return StartCoroutine(Atk1(atk1Clip));
                     break;
                 case BossState.Atk2: yield return StartCoroutine(Atk2());
                     break;
             }
             yield return StartCoroutine(Idle(thoughtTime));
-            DecideNextAction();
+            if(DecideForSelf){
+                DecideNextAction();
+            }
         }
     }
 
@@ -101,6 +117,7 @@ public class GrotesqueBehaviour : MonoBehaviour, Damagable {
         }
         anim.SetTrigger("ExitAtk");
         rb2d.velocity = new Vector3(0, 0, 0);
+        yield return new WaitForSeconds(anim.GetCurrentAnimatorClipInfo(0).Length - 0.1f);
     }
 
     IEnumerator GoUnderGround(){
@@ -109,9 +126,9 @@ public class GrotesqueBehaviour : MonoBehaviour, Damagable {
     }
 
     void DecideNextAction(){
-        int rndAction = Random.Range(0, 4);
-        Debug.Log(((BossState)rndAction) + " " + rndAction);
-        currentState = (BossState)rndAction;
+        int dec = WeightedDecision.MakeDecision(decisionWeights);
+        Debug.Log(((BossState)dec) + " " + dec);
+        currentState = (BossState)dec;
     }
 
     void CleaveSpot(Vector2 pos){
@@ -126,5 +143,10 @@ public class GrotesqueBehaviour : MonoBehaviour, Damagable {
 
     public void TakeDamage(int dmg)
     {
+    }
+
+    public void PushBack(Vector2 push)
+    {
+        //throw new System.NotImplementedException();
     }
 }

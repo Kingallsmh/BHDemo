@@ -8,4 +8,5 @@ public interface Damagable {
 
     void TakeDamage(int dmg, Vector2 location);
 
+    void PushBack(Vector2 push);
 }

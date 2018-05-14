@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class MegamanControl : PhysicsObject {
+public class MegamanControl : PhysicsObject, Damagable {
 
     public float maxSpeed = 7;
     public float speed = 7;
@@ -14,9 +14,12 @@ public class MegamanControl : PhysicsObject {
     public GameObject attackUtil;
     bool jumpAgain = true;
 
+    Vector2 pushVelocity = Vector2.zero;
+
     public BaseController pc;
     private CharacterStats stats;
     private Animator animator;
+    public HitboxControl hitbox;
 
     // Use this for initialization
     void Awake()
@@ -27,6 +30,7 @@ public class MegamanControl : PhysicsObject {
 
     private void Start()
     {
+        hitbox.damageItem = this;
         StartCoroutine(InterpretInput());
     }
 
@@ -38,33 +42,39 @@ public class MegamanControl : PhysicsObject {
         if (!isBusy)
         {
             move.x = pc.DirectionInput.x;
+            if (pc.GetButton(0) && grounded && jumpAgain)
+            {
+                velocity.y = jumpTakeOffSpeed;
+                jumpAgain = false;
+                grounded = false;
+                StartCoroutine(WatchForJumpRelease());
+            }
+            else if (!pc.GetButton(0))
+            {
+                if (velocity.y > 0)
+                {
+                    velocity.y = velocity.y * 0.5f;
+                }
+            }
+
+            if (pc.GetButton(2) && grounded && !isBusy)
+            {
+                isDodging = true;
+                isBusy = true;
+                animator.SetBool("Dash", true);
+            }
         }
         else
         {
             if (isDodging)
                 move.x = Dodge(totalDodgeTime);
-        }
-
-        if (pc.GetButton(2) && grounded && !isBusy)
-        {
-            isDodging = true;
-            isBusy = true;
-            animator.SetBool("Dash", true);
-        }
-
-        if (pc.GetButton(0) && grounded && jumpAgain)
-        {
-            velocity.y = jumpTakeOffSpeed;
-            jumpAgain = false;
-            StartCoroutine(WatchForJumpRelease());
-        }
-        else if (!pc.GetButton(0))
-        {
-            if (velocity.y > 0)
+            if (!grounded)
             {
-                velocity.y = velocity.y * 0.5f;
+                move = previousMove;
             }
         }
+
+
 
         if (move.x > 0)
         {
@@ -78,6 +88,8 @@ public class MegamanControl : PhysicsObject {
         animator.SetBool("InAir", !this.grounded);
         animator.SetBool("Moving", Mathf.Abs(velocity.x) > 0);
         previousMove = move;
+        move += pushVelocity;
+        PushBack();
         targetVelocity = move * maxSpeed;
     }
 
@@ -99,49 +111,21 @@ public class MegamanControl : PhysicsObject {
                 pc.GetInput();
                 if (pc.GetButton(1) && !isBusy) //Attack button
                 {
-                    if (grounded)
-                    {
-                        Attack();
-                    }
+                    Attack();
                 }
             }
             yield return null;
         }
     }
 
-    public IEnumerator InterpretInput2()
-    {
-        while (pc)
-        {
-            if (!GameManagerScript.Instance.PauseActions)
-            {
-                if (!isBusy || isBusy)
-                {
-                    pc.GetInput();
-                    if (pc.GetButton(1) && !isBusy) //Attack button
-                    {
-                        Attack();
-                    }
-                    else if (pc.GetButton(2))
-                    {
-                        StartCoroutine(Special(1));
-                    }
-                }
-                else
-                {
-                    pc.ResetInput();
-                }
-            }
 
-            yield return null;
-        }
-    }
 
     public IEnumerator Hit()
     {
         isBusy = true;
-        animator.SetTrigger("Hit");
-        yield return new WaitForSeconds(0.5f);
+        animator.SetBool("Hit", true);
+        yield return new WaitForSeconds(1f);
+        animator.SetBool("Hit", false);
         isBusy = false;
     }
 
@@ -237,5 +221,34 @@ public class MegamanControl : PhysicsObject {
 
     public void TakeDamage(int dmg, Vector2 location)
     {
+        if (!isDodging)
+        {
+            StartCoroutine(Hit());
+        }
+    }
+
+    public void PushBack()
+    {
+        if (pushVelocity.x > 0.1f || pushVelocity.x < -0.1f)
+        {
+            pushVelocity.x -= Mathf.Sign(pushVelocity.x) * 0.1f;
+        }
+        else
+        {
+            pushVelocity.x = 0;
+        }
+        if (pushVelocity.y > 0.1f || pushVelocity.y < -0.1f)
+        {
+            pushVelocity.x -= Mathf.Sign(pushVelocity.y) * 0.1f;
+        }
+        else
+        {
+            pushVelocity.y = 0;
+        }
+    }
+
+    public void PushBack(Vector2 push)
+    {
+        pushVelocity = push;
     }
 }

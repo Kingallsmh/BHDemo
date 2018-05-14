@@ -6,6 +6,8 @@ public class EntityInterpret : PhysicsObject, Damagable {
 
 	public float maxSpeed = 7;
     public float speed = 7;
+    public float incrementMove = 1;
+    public float decreaseMove = 1;
     public float jumpTakeOffSpeed = 10;
     public float dodgeSpeed = 2;
     public bool isDodging = false;
@@ -14,63 +16,73 @@ public class EntityInterpret : PhysicsObject, Damagable {
     public GameObject attackUtil;
     bool jumpAgain = true;
 
+    Vector2 pushVelocity = Vector2.zero;
+
     public BaseController pc;
     private CharacterStats stats;
-    public SpriteRenderer spriteRenderer;
     private Animator animator;
+
+    public HitboxControl hitbox;
 
     // Use this for initialization
     void Awake()
     {
         //stats = GetComponent<CharacterStats>();
-        //spriteRenderer = transform.GetChild(0).GetComponent<SpriteRenderer>();
         animator = GetComponent<Animator>();
-
-        //stats.InitStats();
-        //To have it facing right * * *
-        SetFacing(1);
     }
 
     private void Start()
     {
+        hitbox.damageItem = this;
         StartCoroutine(InterpretInput());
     }
 
-    //For controlling movement of the entity
+    //Variable used to record previous input and input velocity
     Vector2 previousMove;
     protected override void ComputeVelocity()
     {
-        Vector2 move = Vector2.zero;
+        Vector2 move = previousMove;
 
-        //if(!grounded){
-        //    move.x = previousMove.x;
-        //}
-        //else{
-        //    if(!isBusy){
-        //        move.x = pc.DirectionInput.x;
-        //    }
-        //}
         if(!isBusy){
-            move.x = pc.DirectionInput.x;
+            //Ramping speed or decline
+            move.x += pc.DirectionInput.x * incrementMove;
+            if((int)Mathf.Sign(move.x) != (int)Mathf.Sign(pc.DirectionInput.x) && (int)pc.DirectionInput.x != 0){
+                move.x = 0;
+            }
+            else if(pc.DirectionInput.x <= 0.1f && pc.DirectionInput.x >= -0.1f){
+                if(move.x >= 0.1f || move.x <= -0.1f){
+                    move.x -= -transform.localScale.x * decreaseMove;
+                }
+                else{
+                    move.x = 0;
+                }
+            }
         }
         else{
+            move.x = 0;
             if(isDodging)
                 move.x = Dodge(totalDodgeTime);
+            if(!grounded){
+                move = previousMove;
+            }
         }
 
+        //Handling Dodge (Zero's Dash)
         if(pc.GetButton(2) && grounded && !isBusy){
             isDodging = true;
             isBusy = true;
             animator.SetBool("Dash", true);
         }
 
-        if (pc.GetButton(0) && grounded && jumpAgain)
+        //Handling Jumping and air control
+        if (pc.GetButton(0) && grounded && jumpAgain && !isBusy)
         {
             velocity.y = jumpTakeOffSpeed;
             jumpAgain = false;
+			ResetGroundNormal();
             StartCoroutine(WatchForJumpRelease());
         }
-        else if (!pc.GetButton(0))
+        else if (!pc.GetButton(0)) //Can add "&& !isBusy" to continue upwards motion or go change if receiving input or not
         {
             if (velocity.y > 0)
             {
@@ -78,6 +90,7 @@ public class EntityInterpret : PhysicsObject, Damagable {
             }
         }
 
+        //Change the characters facing direction
         if(move.x > 0)
         {
             transform.localScale = new Vector3(-1, 1);
@@ -86,14 +99,13 @@ public class EntityInterpret : PhysicsObject, Damagable {
         {
             transform.localScale = new Vector3(1, 1);
         }
-        //bool flipSprite = (spriteRenderer.flipX ? (pc.DirectionInput.x < -0.01f) : (pc.DirectionInput.x > 0.01f));
-        //if (flipSprite)
-        //{
-        //    transform.localScale = new Vector3(-transform.localScale.x, transform.localScale.y);
-        //    //spriteRenderer.flipX = !spriteRenderer.flipX;
-        //    //attackUtil.transform.localPosition = new Vector3(-attackUtil.transform.localPosition.x, attackUtil.transform.localPosition.y);
-        //    //attackUtil.GetComponent<SpriteRenderer>().flipX = !attackUtil.GetComponent<SpriteRenderer>().flipX;
-        //}
+
+        //Limits the move variable
+        if(!isDodging){
+            move.x = Mathf.Clamp(move.x, -maxSpeed, maxSpeed);
+        }
+
+        //Setting animations based on current variables
         animator.SetFloat("Movement_Y", velocity.y);
         animator.SetBool("InAir", !this.grounded);
         animator.SetBool("Moving", Mathf.Abs(velocity.x) > 0);
@@ -101,8 +113,12 @@ public class EntityInterpret : PhysicsObject, Damagable {
         //{
         //    animator.SetFloat("Input_X", pc.DirectionInput.x);
         //}
+
         previousMove = move;
-        targetVelocity = move * maxSpeed;     
+        //If there is push back, add to move variable
+        move += pushVelocity;
+        PushBack();
+        targetVelocity = move * speed;     
     }
 
     public IEnumerator WatchForJumpRelease()
@@ -123,16 +139,9 @@ public class EntityInterpret : PhysicsObject, Damagable {
                 pc.GetInput();
                 if (pc.GetButton(1) && !isBusy) //Attack button
                 {
-                    if (grounded)
-                    {
-                        Attack();
-                    }
-                        
+                    Attack();
                 }
-                //else if(pc.GetButton(2)){ //Special button
-                //    StartCoroutine(Special(1));
-                //}
-            }            
+            }
             yield return null;
         }
     }
@@ -143,16 +152,12 @@ public class EntityInterpret : PhysicsObject, Damagable {
         {
             if (!GameManagerScript.Instance.PauseActions)
             {
-                if (!isBusy || isBusy)
+                if (!isBusy)
                 {
                     pc.GetInput();
-                    if (pc.GetButton(1) && !isBusy) //Attack button
+                    if (pc.GetButton(1)) //Attack button
                     {
                         Attack();
-                    }
-                    else if (pc.GetButton(2))
-                    { //Special button
-                        StartCoroutine(Special(1));
                     }
                 }
                 else
@@ -160,7 +165,6 @@ public class EntityInterpret : PhysicsObject, Damagable {
                     pc.ResetInput();
                 }
             }
-
             yield return null;
         }
     }
@@ -168,8 +172,9 @@ public class EntityInterpret : PhysicsObject, Damagable {
     public IEnumerator Hit()
     {
         isBusy = true;
-        animator.SetTrigger("Hit");
-        yield return new WaitForSeconds(0.5f);
+        animator.SetBool("Hit", true);
+        yield return new WaitForSeconds(1f);
+        animator.SetBool("Hit", false);
         isBusy = false;
     }
 
@@ -190,39 +195,6 @@ public class EntityInterpret : PhysicsObject, Damagable {
     {
         inAttackAnim = false;
     }
-
-    //IEnumerator AttackEventExecution(int direction)
-    //{
-    //    //unphysics = true;
-    //    int currentSubtract = 0;
-    //    while (inAttackAnim)
-    //    {
-    //        Movement(new Vector2(tackleSpeed - currentSubtract, 0) * Time.deltaTime * direction, false);
-    //        currentSubtract++;
-    //        yield return null;
-    //    }
-    //    //unphysics = false;
-    //}
-
-    public IEnumerator Special(float cooldown)
-    {
-        isBusy = true;
-        animator.SetTrigger("Special");
-        yield return new WaitForSeconds(cooldown);
-        isBusy = false;
-    }
-
-    //public void LaunchProjectile()
-    //{
-    //    if(animator.GetFloat("Input_X") > 0)
-    //    {
-    //        attackUtil.FireAmmo(1, 0);
-    //    }
-    //    else
-    //    {
-    //        attackUtil.FireAmmo(-1, 0);
-    //    }
-    //}
 
     float Dodge(float time){
         if(dodgeTimer > time){
@@ -251,16 +223,35 @@ public class EntityInterpret : PhysicsObject, Damagable {
         isBusy = false;
     }
 
-    public void SetFacing(float x)
-    {
-        animator.SetFloat("Input_X", x);
-    }
-
     public void TakeDamage(int dmg)
     {
     }
 
     public void TakeDamage(int dmg, Vector2 location)
     {
+        Debug.Log("Got hit!");
+        if(!isDodging){
+            StartCoroutine(Hit());
+        }
+    }
+
+    public void PushBack(){
+        if(pushVelocity.x > 0.1f || pushVelocity.x < -0.1f){
+            pushVelocity.x -= Mathf.Sign(pushVelocity.x) * 0.1f;
+        }
+        else{
+            pushVelocity.x = 0;
+        }
+        if(pushVelocity.y > 0.1f || pushVelocity.y < -0.1f){
+            pushVelocity.x -= Mathf.Sign(pushVelocity.y) * 0.1f;
+        }
+        else
+        {
+            pushVelocity.y = 0;
+        }
+    }
+
+    public void PushBack(Vector2 push){
+        pushVelocity = push;
     }
 }

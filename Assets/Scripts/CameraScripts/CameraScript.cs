@@ -20,7 +20,7 @@ public class CameraScript : MonoBehaviour {
 
     private void LateUpdate()
     {
-        myCam.orthographicSize = (Screen.height / 16f) / 4f;
+        //myCam.orthographicSize = (Screen.height / 16f) / 4f;
         if (target)
         {
             //transform.position = Vector3.Lerp(transform.position, target.position, speed) + new Vector3(0, 0, -10f);
