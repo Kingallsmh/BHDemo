@@ -66,7 +66,7 @@ public class HitboxControl : MonoBehaviour
             if(damageItem != null){
                 damageItem.TakeDamage(1, box.GetComponent<Collider2D>().transform.position);
                 float x = box.transform.position.x - transform.position.x;
-                Debug.Log(x);
+                //Debug.Log(x);
                 damageItem.PushBack(new Vector2(Mathf.Sign(x) * -box.pushStrength.x, box.pushStrength.y));
             }
             //Recieve damage

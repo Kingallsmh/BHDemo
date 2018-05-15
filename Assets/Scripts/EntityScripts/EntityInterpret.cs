@@ -254,7 +254,6 @@ public class EntityInterpret : PhysicsObject, Damagable {
 
     public void TakeDamage(int dmg, Vector2 location)
     {
-        Debug.Log("Got hit!");
         if(!isDodging){
             StartCoroutine(Hit());
         }
